@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
-import { useLocalStorage } from './hooks/useLocalStorage'
+import { signOut } from 'firebase/auth'
+import { auth } from './firebase'
+import { useCloudDoc } from './hooks/useCloudDoc'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskList } from './components/TaskList'
 import { EnjoyPanel } from './components/EnjoyPanel'
@@ -9,11 +11,27 @@ function makeId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-function App() {
-  const [tasks, setTasks] = useLocalStorage('taskmanager.tasks', [])
-  const [delights, setDelights] = useLocalStorage('taskmanager.delights', [])
+const EMPTY_DOC = { tasks: [], delights: [] }
+
+function App({ uid }) {
+  const { data, update, ready } = useCloudDoc(uid, EMPTY_DOC)
+  const { tasks, delights } = data
   const [suggestionId, setSuggestionId] = useState(null)
   const [categoryFilter, setCategoryFilter] = useState('')
+
+  function setTasks(updater) {
+    update((prev) => ({
+      ...prev,
+      tasks: typeof updater === 'function' ? updater(prev.tasks) : updater,
+    }))
+  }
+
+  function setDelights(updater) {
+    update((prev) => ({
+      ...prev,
+      delights: typeof updater === 'function' ? updater(prev.delights) : updater,
+    }))
+  }
 
   const categoryOptions = useMemo(() => {
     const names = tasks.map((t) => t.category).filter(Boolean)
@@ -123,9 +141,20 @@ function App() {
 
   const suggestion = delights.find((d) => d.id === suggestionId) || delights[0] || null
 
+  if (!ready) {
+    return (
+      <div className="page">
+        <p className="loading-state">Loading your tasks…</p>
+      </div>
+    )
+  }
+
   return (
     <div className="page">
       <header className="page-header">
+        <button type="button" className="sign-out" onClick={() => signOut(auth)}>
+          Lock
+        </button>
         <h1>Task Manager</h1>
         <p>Get things done, and don't forget to enjoy yourself too.</p>
       </header>
