@@ -58,11 +58,6 @@
   .layout {
     grid-template-columns: 1fr;
   }
-
-  .panel-tasks,
-  .panel-enjoy {
-    order: 0;
-  }
 }
 
 .panel {
