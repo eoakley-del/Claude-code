@@ -57,7 +57,7 @@ export function TaskFilters({ filters, categoryOptions, onChange }) {
       />
 
       <DateFilterGroup
-        label="Work on"
+        label="Work on on:"
         mode={filters.workMode}
         date={filters.workDate}
         onModeChange={(workMode) => patch({ workMode })}

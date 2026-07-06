@@ -111,7 +111,7 @@ export function TaskItem({
               />
             </label>
             <label className="field">
-              <span>Work on</span>
+              <span>Work on on:</span>
               <input
                 type="date"
                 value={task.workOnDate || ''}
