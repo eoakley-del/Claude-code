@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from './firebase'
 import { useCloudDoc } from './hooks/useCloudDoc'
-import { matchesDateFilter } from './utils/date'
+import { matchesDateFilter, todayISO } from './utils/date'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskFilters } from './components/TaskFilters'
 import { TaskList } from './components/TaskList'
@@ -133,7 +133,15 @@ function App({ uid }) {
   }
 
   function addDelight(text) {
-    setDelights((prev) => [...prev, { id: makeId(), text }])
+    setDelights((prev) => [...prev, { id: makeId(), text, todayDate: '' }])
+  }
+
+  function toggleTodayPick(id) {
+    setDelights((prev) =>
+      prev.map((d) =>
+        d.id === id ? { ...d, todayDate: d.todayDate === todayISO() ? '' : todayISO() } : d,
+      ),
+    )
   }
 
   function deleteDelight(id) {
@@ -207,6 +215,7 @@ function App({ uid }) {
             onAdd={addDelight}
             onDelete={deleteDelight}
             onShuffle={shuffleSuggestion}
+            onToggleToday={toggleTodayPick}
           />
         </section>
       </main>

@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { todayISO } from '../utils/date'
 
-export function EnjoyPanel({ items, suggestion, onAdd, onDelete, onShuffle }) {
+export function EnjoyPanel({ items, suggestion, onAdd, onDelete, onShuffle, onToggleToday }) {
   const [draft, setDraft] = useState('')
+  const todayPicks = items.filter((item) => item.todayDate === todayISO())
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -16,6 +18,27 @@ export function EnjoyPanel({ items, suggestion, onAdd, onDelete, onShuffle }) {
       <p className="enjoy-intro">
         Not tasks — just things worth remembering to enjoy.
       </p>
+
+      {todayPicks.length > 0 && (
+        <div className="today-picks">
+          <span className="today-picks-label">Picked for today</span>
+          <ul className="today-picks-list">
+            {todayPicks.map((item) => (
+              <li key={item.id} className="today-pick-item">
+                <span>{item.text}</span>
+                <button
+                  type="button"
+                  className="star-btn active"
+                  aria-label="Remove from today"
+                  onClick={() => onToggleToday(item.id)}
+                >
+                  ★
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {suggestion && (
         <div className="suggestion-card">
@@ -42,19 +65,32 @@ export function EnjoyPanel({ items, suggestion, onAdd, onDelete, onShuffle }) {
 
       {items.length > 0 && (
         <ul className="enjoy-list">
-          {items.map((item) => (
-            <li key={item.id} className="enjoy-item">
-              <span>{item.text}</span>
-              <button
-                type="button"
-                className="icon-btn"
-                aria-label="Remove"
-                onClick={() => onDelete(item.id)}
-              >
-                ×
-              </button>
-            </li>
-          ))}
+          {items.map((item) => {
+            const isToday = item.todayDate === todayISO()
+            return (
+              <li key={item.id} className="enjoy-item">
+                <span>{item.text}</span>
+                <div className="enjoy-item-actions">
+                  <button
+                    type="button"
+                    className={`star-btn${isToday ? ' active' : ''}`}
+                    aria-label={isToday ? 'Remove from today' : 'Pick for today'}
+                    onClick={() => onToggleToday(item.id)}
+                  >
+                    {isToday ? '★' : '☆'}
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    aria-label="Remove"
+                    onClick={() => onDelete(item.id)}
+                  >
+                    ×
+                  </button>
+                </div>
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>
