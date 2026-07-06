@@ -78,7 +78,7 @@ export function TaskItem({
           )}
           {task.workOnDate && (
             <span className="chip chip-workon">
-              Work on {formatDate(task.workOnDate)}
+              Work on on: {formatDate(task.workOnDate)}
             </span>
           )}
           {subtasks.length > 0 && (
