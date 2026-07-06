@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from './firebase'
 import { useCloudDoc } from './hooks/useCloudDoc'
+import { matchesDateFilter } from './utils/date'
 import { TaskNotepad } from './components/TaskNotepad'
+import { TaskFilters } from './components/TaskFilters'
 import { TaskList } from './components/TaskList'
 import { EnjoyPanel } from './components/EnjoyPanel'
 import './App.css'
@@ -13,11 +15,19 @@ function makeId() {
 
 const EMPTY_DOC = { tasks: [], delights: [] }
 
+const DEFAULT_FILTERS = {
+  category: '',
+  dueMode: 'any',
+  dueDate: '',
+  workMode: 'any',
+  workDate: '',
+}
+
 function App({ uid }) {
   const { data, update, ready } = useCloudDoc(uid, EMPTY_DOC)
   const { tasks, delights } = data
   const [suggestionId, setSuggestionId] = useState(null)
-  const [categoryFilter, setCategoryFilter] = useState('')
+  const [filters, setFilters] = useState(DEFAULT_FILTERS)
 
   function setTasks(updater) {
     update((prev) => ({
@@ -38,9 +48,12 @@ function App({ uid }) {
     return [...new Set(names)].sort()
   }, [tasks])
 
-  const visibleTasks = categoryFilter
-    ? tasks.filter((t) => t.category === categoryFilter)
-    : tasks
+  const visibleTasks = tasks.filter((t) => {
+    if (filters.category && t.category !== filters.category) return false
+    if (!matchesDateFilter(t.dueDate, filters.dueMode, filters.dueDate)) return false
+    if (!matchesDateFilter(t.workOnDate, filters.workMode, filters.workDate)) return false
+    return true
+  })
 
   function addTasks(lines) {
     const newTasks = lines.map((text) => ({
@@ -163,31 +176,18 @@ function App({ uid }) {
         <section className="panel">
           <h2>Tasks</h2>
           <TaskNotepad onAddTasks={addTasks} />
-          {categoryOptions.length > 0 && (
-            <div className="category-filter">
-              <label>
-                <span>Filter</span>
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                  <option value="">All categories</option>
-                  {categoryOptions.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          )}
+          <TaskFilters
+            filters={filters}
+            categoryOptions={categoryOptions}
+            onChange={setFilters}
+          />
           <TaskList
             tasks={visibleTasks}
             categoryOptions={categoryOptions}
             emptyMessage={
               tasks.length === 0
                 ? 'No tasks yet — jot some down above.'
-                : 'No tasks in this category.'
+                : 'No tasks match these filters.'
             }
             onToggle={toggleTask}
             onDelete={deleteTask}

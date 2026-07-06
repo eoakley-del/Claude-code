@@ -160,24 +160,31 @@
   font-style: italic;
 }
 
-.category-filter {
+.task-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
   margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 
-.category-filter label {
+.filter-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 13px;
   color: var(--text);
 }
 
-.category-filter select {
+.filter-group select,
+.filter-group input[type='date'] {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 4px 8px;
   background: var(--bg);
   color: var(--text-h);
+  font-size: 13px;
 }
 
 .task-list {
