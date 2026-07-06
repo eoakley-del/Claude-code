@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from './firebase'
 import { useCloudDoc } from './hooks/useCloudDoc'
+import { useLocalStorage } from './hooks/useLocalStorage'
 import { matchesDateFilter, todayISO } from './utils/date'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskFilters } from './components/TaskFilters'
@@ -28,6 +29,10 @@ function App({ uid }) {
   const { tasks, delights } = data
   const [suggestionId, setSuggestionId] = useState(null)
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [enjoyCollapsed, setEnjoyCollapsed] = useLocalStorage(
+    'taskmanager.enjoyCollapsed',
+    false,
+  )
 
   function setTasks(updater) {
     update((prev) => ({
@@ -207,16 +212,27 @@ function App({ uid }) {
           />
         </section>
 
-        <section className="panel">
-          <h2>Things to enjoy</h2>
-          <EnjoyPanel
-            items={delights}
-            suggestion={suggestion}
-            onAdd={addDelight}
-            onDelete={deleteDelight}
-            onShuffle={shuffleSuggestion}
-            onToggleToday={toggleTodayPick}
-          />
+        <section className={`panel${enjoyCollapsed ? ' panel-collapsed' : ''}`}>
+          <div className="panel-header">
+            <h2>Things to enjoy</h2>
+            <button
+              type="button"
+              className="panel-toggle"
+              onClick={() => setEnjoyCollapsed((c) => !c)}
+            >
+              {enjoyCollapsed ? 'Show' : 'Hide'}
+            </button>
+          </div>
+          {!enjoyCollapsed && (
+            <EnjoyPanel
+              items={delights}
+              suggestion={suggestion}
+              onAdd={addDelight}
+              onDelete={deleteDelight}
+              onShuffle={shuffleSuggestion}
+              onToggleToday={toggleTodayPick}
+            />
+          )}
         </section>
       </main>
     </div>
