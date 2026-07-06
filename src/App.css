@@ -434,19 +434,24 @@
 }
 
 .suggestion-card {
-  background: var(--warm-bg);
-  border: 1px solid var(--warm-border);
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 20px;
   text-align: center;
 }
 
+.suggestion-card .btn-ghost {
+  border-color: var(--info-border);
+  color: var(--info);
+}
+
 .suggestion-label {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--warm);
+  color: var(--info);
   font-weight: 600;
 }
 
