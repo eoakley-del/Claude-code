@@ -10,6 +10,9 @@
   --warm: #e08b1f;
   --warm-bg: rgba(224, 139, 31, 0.12);
   --warm-border: rgba(224, 139, 31, 0.4);
+  --danger: #d1373f;
+  --danger-bg: rgba(209, 55, 63, 0.12);
+  --danger-border: rgba(209, 55, 63, 0.4);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -40,6 +43,9 @@
     --warm: #f2b155;
     --warm-bg: rgba(242, 177, 85, 0.12);
     --warm-border: rgba(242, 177, 85, 0.4);
+    --danger: #f0868c;
+    --danger-bg: rgba(240, 134, 140, 0.14);
+    --danger-border: rgba(240, 134, 140, 0.45);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }

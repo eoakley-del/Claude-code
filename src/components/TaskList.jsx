@@ -1,33 +1,46 @@
-export function TaskList({ tasks, onToggle, onDelete }) {
+import { TaskItem } from './TaskItem'
+
+export function TaskList({
+  tasks,
+  categoryOptions,
+  emptyMessage,
+  onToggle,
+  onDelete,
+  onUpdate,
+  onAddSubtask,
+  onToggleSubtask,
+  onUpdateSubtask,
+  onDeleteSubtask,
+}) {
   if (tasks.length === 0) {
-    return <p className="empty-state">No tasks yet — jot some down above.</p>
+    return <p className="empty-state">{emptyMessage}</p>
   }
 
   const open = tasks.filter((t) => !t.done)
   const done = tasks.filter((t) => t.done)
 
   return (
-    <ul className="task-list">
-      {[...open, ...done].map((task) => (
-        <li key={task.id} className={`task-item${task.done ? ' done' : ''}`}>
-          <label className="task-label">
-            <input
-              type="checkbox"
-              checked={task.done}
-              onChange={() => onToggle(task.id)}
-            />
-            <span>{task.text}</span>
-          </label>
-          <button
-            type="button"
-            className="icon-btn"
-            aria-label="Delete task"
-            onClick={() => onDelete(task.id)}
-          >
-            ×
-          </button>
-        </li>
-      ))}
-    </ul>
+    <>
+      <datalist id="category-options">
+        {categoryOptions.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
+      <ul className="task-list">
+        {[...open, ...done].map((task) => (
+          <TaskItem
+            key={task.id}
+            task={task}
+            onToggle={() => onToggle(task.id)}
+            onDelete={() => onDelete(task.id)}
+            onUpdate={(updates) => onUpdate(task.id, updates)}
+            onAddSubtask={(text) => onAddSubtask(task.id, text)}
+            onToggleSubtask={(subId) => onToggleSubtask(task.id, subId)}
+            onUpdateSubtask={(subId, text) => onUpdateSubtask(task.id, subId, text)}
+            onDeleteSubtask={(subId) => onDeleteSubtask(task.id, subId)}
+          />
+        ))}
+      </ul>
+    </>
   )
 }
