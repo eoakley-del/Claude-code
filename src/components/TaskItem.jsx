@@ -43,6 +43,25 @@ export function TaskItem({
           value={task.text}
           onChange={(e) => onUpdate({ text: e.target.value })}
         />
+        <button
+          type="button"
+          className="icon-btn caret"
+          aria-label={expanded ? 'Collapse details' : 'Edit details'}
+          onClick={() => setExpanded((e) => !e)}
+        >
+          {expanded ? '▾' : '▸'}
+        </button>
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label="Delete task"
+          onClick={onDelete}
+        >
+          ×
+        </button>
+      </div>
+
+      {(task.category || task.dueDate || task.workOnDate || subtasks.length > 0) && (
         <div className="task-chips">
           {task.category && (
             <span
@@ -68,23 +87,7 @@ export function TaskItem({
             </span>
           )}
         </div>
-        <button
-          type="button"
-          className="icon-btn caret"
-          aria-label={expanded ? 'Collapse details' : 'Edit details'}
-          onClick={() => setExpanded((e) => !e)}
-        >
-          {expanded ? '▾' : '▸'}
-        </button>
-        <button
-          type="button"
-          className="icon-btn"
-          aria-label="Delete task"
-          onClick={onDelete}
-        >
-          ×
-        </button>
-      </div>
+      )}
 
       {expanded && (
         <div className="task-details">
