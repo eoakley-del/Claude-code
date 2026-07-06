@@ -50,9 +50,18 @@
   gap: 24px;
 }
 
+.panel-tasks {
+  order: 2;
+}
+
 @media (max-width: 720px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .panel-tasks,
+  .panel-enjoy {
+    order: 0;
   }
 }
 

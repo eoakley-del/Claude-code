@@ -186,7 +186,7 @@ function App({ uid }) {
       </header>
 
       <main className="layout">
-        <section className="panel">
+        <section className="panel panel-tasks">
           <h2>Tasks</h2>
           <TaskNotepad onAddTasks={addTasks} />
           <TaskFilters
@@ -212,7 +212,7 @@ function App({ uid }) {
           />
         </section>
 
-        <section className={`panel${enjoyCollapsed ? ' panel-collapsed' : ''}`}>
+        <section className={`panel panel-enjoy${enjoyCollapsed ? ' panel-collapsed' : ''}`}>
           <div className="panel-header">
             <h2>Things to enjoy</h2>
             <button
