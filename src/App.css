@@ -399,6 +399,29 @@
   font-size: 14px;
 }
 
+.field-categories {
+  margin-bottom: 14px;
+}
+
+.field-categories .filter-chip-row {
+  margin: 6px 0 8px;
+}
+
+.add-category-form {
+  display: flex;
+  gap: 8px;
+}
+
+.add-category-form input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: var(--bg-alt);
+  color: var(--text-h);
+  font-size: 14px;
+}
+
 .subtasks-label {
   display: block;
   font-size: 12px;

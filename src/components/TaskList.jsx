@@ -25,11 +25,6 @@ export function TaskList({
 
   return (
     <>
-      <datalist id="category-options">
-        {categoryOptions.map((name) => (
-          <option key={name} value={name} />
-        ))}
-      </datalist>
       {visible.length === 0 ? (
         <p className="empty-state">
           All done — {done.length} completed task{done.length === 1 ? '' : 's'} hidden.
@@ -40,6 +35,7 @@ export function TaskList({
             <TaskItem
               key={task.id}
               task={task}
+              categoryOptions={categoryOptions}
               onToggle={() => onToggle(task.id)}
               onDelete={() => onDelete(task.id)}
               onUpdate={(updates) => onUpdate(task.id, updates)}

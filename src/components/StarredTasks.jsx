@@ -2,6 +2,7 @@ import { TaskItem } from './TaskItem'
 
 export function StarredTasks({
   tasks,
+  categoryOptions,
   onToggle,
   onDelete,
   onUpdate,
@@ -21,6 +22,7 @@ export function StarredTasks({
           <TaskItem
             key={task.id}
             task={task}
+            categoryOptions={categoryOptions}
             onToggle={() => onToggle(task.id)}
             onDelete={() => onDelete(task.id)}
             onUpdate={(updates) => onUpdate(task.id, updates)}

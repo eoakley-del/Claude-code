@@ -5,6 +5,7 @@ import { useCloudDoc } from './hooks/useCloudDoc'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { matchesDateFilter, todayISO } from './utils/date'
 import { UNCATEGORIZED } from './utils/constants'
+import { getTaskCategories } from './utils/task'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskFilters } from './components/TaskFilters'
 import { TaskList } from './components/TaskList'
@@ -55,15 +56,17 @@ function App({ uid }) {
   }
 
   const categoryOptions = useMemo(() => {
-    const names = tasks.map((t) => t.category).filter(Boolean)
+    const names = tasks.flatMap((t) => getTaskCategories(t))
     return [...new Set(names)].sort()
   }, [tasks])
 
   const visibleTasks = tasks.filter((t) => {
     if (filters.categories.length > 0) {
-      const matchesCategory = t.category
-        ? filters.categories.includes(t.category)
-        : filters.categories.includes(UNCATEGORIZED)
+      const taskCategories = getTaskCategories(t)
+      const matchesCategory =
+        taskCategories.length > 0
+          ? taskCategories.some((c) => filters.categories.includes(c))
+          : filters.categories.includes(UNCATEGORIZED)
       if (!matchesCategory) return false
     }
     if (!matchesDateFilter(t.dueDate, filters.dueMode, filters.dueDate)) return false
@@ -78,7 +81,7 @@ function App({ uid }) {
       id: makeId(),
       text,
       done: false,
-      category: '',
+      categories: [],
       dueDate: '',
       workOnDate: '',
       todayDate: '',
@@ -212,6 +215,7 @@ function App({ uid }) {
           <h2>Tasks</h2>
           <StarredTasks
             tasks={starredTasks}
+            categoryOptions={categoryOptions}
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}

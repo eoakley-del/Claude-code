@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { categoryColor } from '../utils/categoryColor'
 import { todayISO, formatDate } from '../utils/date'
+import { getTaskCategories } from '../utils/task'
 import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
 
 function SubtaskRow({ sub, onToggle, onUpdate, onDelete }) {
@@ -35,6 +36,7 @@ function SubtaskRow({ sub, onToggle, onUpdate, onDelete }) {
 
 export function TaskItem({
   task,
+  categoryOptions,
   onToggle,
   onDelete,
   onUpdate,
@@ -46,11 +48,12 @@ export function TaskItem({
 }) {
   const [expanded, setExpanded] = useState(false)
   const [subtaskDraft, setSubtaskDraft] = useState('')
+  const [categoryDraft, setCategoryDraft] = useState('')
 
   const subtasks = task.subtasks || []
   const doneCount = subtasks.filter((s) => s.done).length
   const overdue = Boolean(task.dueDate) && !task.done && task.dueDate < todayISO()
-  const color = categoryColor(task.category)
+  const categories = getTaskCategories(task)
   const isToday = task.todayDate === todayISO()
   const textareaRef = useAutoResizeTextarea(task.text)
 
@@ -60,6 +63,24 @@ export function TaskItem({
     if (!text) return
     onAddSubtask(text)
     setSubtaskDraft('')
+  }
+
+  function toggleCategory(name) {
+    const next = categories.includes(name)
+      ? categories.filter((c) => c !== name)
+      : [...categories, name]
+    onUpdate({ categories: next })
+  }
+
+  function handleAddCategory(e) {
+    e.preventDefault()
+    const name = categoryDraft.trim()
+    if (!name || categories.includes(name)) {
+      setCategoryDraft('')
+      return
+    }
+    onUpdate({ categories: [...categories, name] })
+    setCategoryDraft('')
   }
 
   return (
@@ -104,16 +125,20 @@ export function TaskItem({
         </button>
       </div>
 
-      {(task.category || task.dueDate || task.workOnDate || subtasks.length > 0) && (
+      {(categories.length > 0 || task.dueDate || task.workOnDate || subtasks.length > 0) && (
         <div className="task-chips">
-          {task.category && (
-            <span
-              className="chip"
-              style={{ background: color.bg, borderLeftColor: color.border }}
-            >
-              {task.category}
-            </span>
-          )}
+          {categories.map((name) => {
+            const color = categoryColor(name)
+            return (
+              <span
+                key={name}
+                className="chip"
+                style={{ background: color.bg, borderLeftColor: color.border }}
+              >
+                {name}
+              </span>
+            )
+          })}
           {task.dueDate && (
             <span className={`chip chip-due${overdue ? ' overdue' : ''}`}>
               Due {formatDate(task.dueDate)}
@@ -134,17 +159,41 @@ export function TaskItem({
 
       {expanded && (
         <div className="task-details">
-          <div className="task-detail-fields">
-            <label className="field">
-              <span>Category</span>
+          <div className="field field-categories">
+            <span>Categories</span>
+            {categoryOptions.length > 0 && (
+              <div className="filter-chip-row">
+                {categoryOptions.map((name) => {
+                  const active = categories.includes(name)
+                  const color = categoryColor(name)
+                  return (
+                    <button
+                      type="button"
+                      key={name}
+                      className={`filter-chip${active ? ' active' : ''}`}
+                      style={active ? { background: color.bg, borderColor: color.border } : undefined}
+                      onClick={() => toggleCategory(name)}
+                    >
+                      {name}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+            <form className="add-category-form" onSubmit={handleAddCategory}>
               <input
                 type="text"
-                list="category-options"
-                value={task.category || ''}
-                onChange={(e) => onUpdate({ category: e.target.value })}
-                placeholder="e.g. Work"
+                placeholder="New category…"
+                value={categoryDraft}
+                onChange={(e) => setCategoryDraft(e.target.value)}
               />
-            </label>
+              <button type="submit" className="btn btn-ghost">
+                Add
+              </button>
+            </form>
+          </div>
+
+          <div className="task-detail-fields">
             <label className="field">
               <span>Due date</span>
               <input
