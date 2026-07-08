@@ -7,6 +7,7 @@ import { matchesDateFilter, todayISO } from './utils/date'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskFilters } from './components/TaskFilters'
 import { TaskList } from './components/TaskList'
+import { StarredTasks } from './components/StarredTasks'
 import { EnjoyPanel } from './components/EnjoyPanel'
 import './App.css'
 
@@ -60,6 +61,8 @@ function App({ uid }) {
     return true
   })
 
+  const starredTasks = tasks.filter((t) => t.todayDate === todayISO())
+
   function addTasks(lines) {
     const newTasks = lines.map((text) => ({
       id: makeId(),
@@ -68,6 +71,7 @@ function App({ uid }) {
       category: '',
       dueDate: '',
       workOnDate: '',
+      todayDate: '',
       subtasks: [],
     }))
     setTasks((prev) => [...prev, ...newTasks])
@@ -76,6 +80,14 @@ function App({ uid }) {
   function toggleTask(id) {
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
+    )
+  }
+
+  function toggleTaskToday(id) {
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, todayDate: t.todayDate === todayISO() ? '' : todayISO() } : t,
+      ),
     )
   }
 
@@ -188,6 +200,17 @@ function App({ uid }) {
       <main className="layout">
         <section className="panel panel-tasks">
           <h2>Tasks</h2>
+          <StarredTasks
+            tasks={starredTasks}
+            onToggle={toggleTask}
+            onDelete={deleteTask}
+            onUpdate={updateTask}
+            onToggleToday={toggleTaskToday}
+            onAddSubtask={addSubtask}
+            onToggleSubtask={toggleSubtask}
+            onUpdateSubtask={updateSubtask}
+            onDeleteSubtask={deleteSubtask}
+          />
           <TaskNotepad onAddTasks={addTasks} />
           <TaskFilters
             filters={filters}
@@ -205,6 +228,7 @@ function App({ uid }) {
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}
+            onToggleToday={toggleTaskToday}
             onAddSubtask={addSubtask}
             onToggleSubtask={toggleSubtask}
             onUpdateSubtask={updateSubtask}

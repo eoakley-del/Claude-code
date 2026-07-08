@@ -7,6 +7,7 @@ export function TaskItem({
   onToggle,
   onDelete,
   onUpdate,
+  onToggleToday,
   onAddSubtask,
   onToggleSubtask,
   onUpdateSubtask,
@@ -19,6 +20,7 @@ export function TaskItem({
   const doneCount = subtasks.filter((s) => s.done).length
   const overdue = Boolean(task.dueDate) && !task.done && task.dueDate < todayISO()
   const color = categoryColor(task.category)
+  const isToday = task.todayDate === todayISO()
 
   function handleAddSubtask(e) {
     e.preventDefault()
@@ -43,6 +45,14 @@ export function TaskItem({
           value={task.text}
           onChange={(e) => onUpdate({ text: e.target.value })}
         />
+        <button
+          type="button"
+          className={`star-btn${isToday ? ' active' : ''}`}
+          aria-label={isToday ? 'Remove from today' : 'Star for today'}
+          onClick={onToggleToday}
+        >
+          {isToday ? '★' : '☆'}
+        </button>
         <button
           type="button"
           className="icon-btn caret"

@@ -1,9 +1,7 @@
 import { TaskItem } from './TaskItem'
 
-export function TaskList({
+export function StarredTasks({
   tasks,
-  categoryOptions,
-  emptyMessage,
   onToggle,
   onDelete,
   onUpdate,
@@ -13,22 +11,13 @@ export function TaskList({
   onUpdateSubtask,
   onDeleteSubtask,
 }) {
-  if (tasks.length === 0) {
-    return <p className="empty-state">{emptyMessage}</p>
-  }
-
-  const open = tasks.filter((t) => !t.done)
-  const done = tasks.filter((t) => t.done)
+  if (tasks.length === 0) return null
 
   return (
-    <>
-      <datalist id="category-options">
-        {categoryOptions.map((name) => (
-          <option key={name} value={name} />
-        ))}
-      </datalist>
-      <ul className="task-list">
-        {[...open, ...done].map((task) => (
+    <div className="today-picks">
+      <span className="today-picks-label">Starred for today</span>
+      <ul className="task-list starred-task-list">
+        {tasks.map((task) => (
           <TaskItem
             key={task.id}
             task={task}
@@ -43,6 +32,6 @@ export function TaskList({
           />
         ))}
       </ul>
-    </>
+    </div>
   )
 }
