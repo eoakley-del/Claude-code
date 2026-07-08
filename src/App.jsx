@@ -44,6 +44,10 @@ function App({ uid }) {
     'taskmanager.groupByCategory',
     false,
   )
+  const [showTaskInfo, setShowTaskInfo] = useLocalStorage(
+    'taskmanager.showTaskInfo',
+    true,
+  )
 
   function setTasks(updater) {
     update((prev) => ({
@@ -220,6 +224,7 @@ function App({ uid }) {
           <StarredTasks
             tasks={starredTasks}
             categoryOptions={categoryOptions}
+            showInfo={showTaskInfo}
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}
@@ -236,6 +241,8 @@ function App({ uid }) {
             onChange={setFilters}
             groupByCategory={groupByCategory}
             onToggleGroupByCategory={() => setGroupByCategory((g) => !g)}
+            showTaskInfo={showTaskInfo}
+            onToggleShowTaskInfo={() => setShowTaskInfo((s) => !s)}
           />
           <TaskList
             tasks={visibleTasks}
@@ -247,6 +254,7 @@ function App({ uid }) {
             }
             showCompleted={showCompleted}
             onToggleShowCompleted={() => setShowCompleted((s) => !s)}
+            showInfo={showTaskInfo}
             groupByCategory={groupByCategory}
             onToggle={toggleTask}
             onDelete={deleteTask}

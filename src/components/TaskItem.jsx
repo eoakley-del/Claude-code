@@ -37,6 +37,7 @@ function SubtaskRow({ sub, onToggle, onUpdate, onDelete }) {
 export function TaskItem({
   task,
   categoryOptions,
+  showInfo,
   onToggle,
   onDelete,
   onUpdate,
@@ -125,26 +126,28 @@ export function TaskItem({
         </button>
       </div>
 
-      {(categories.length > 0 || task.dueDate || task.workOnDate || subtasks.length > 0) && (
+      {((showInfo && (categories.length > 0 || task.dueDate || task.workOnDate)) ||
+        subtasks.length > 0) && (
         <div className="task-chips">
-          {categories.map((name) => {
-            const color = categoryColor(name)
-            return (
-              <span
-                key={name}
-                className="chip"
-                style={{ background: color.bg, borderLeftColor: color.border }}
-              >
-                {name}
-              </span>
-            )
-          })}
-          {task.dueDate && (
+          {showInfo &&
+            categories.map((name) => {
+              const color = categoryColor(name)
+              return (
+                <span
+                  key={name}
+                  className="chip"
+                  style={{ background: color.bg, borderLeftColor: color.border }}
+                >
+                  {name}
+                </span>
+              )
+            })}
+          {showInfo && task.dueDate && (
             <span className={`chip chip-due${overdue ? ' overdue' : ''}`}>
               Due {formatDate(task.dueDate)}
             </span>
           )}
-          {task.workOnDate && (
+          {showInfo && task.workOnDate && (
             <span className="chip chip-workon">
               Work on on: {formatDate(task.workOnDate)}
             </span>

@@ -35,6 +35,8 @@ export function TaskFilters({
   onChange,
   groupByCategory,
   onToggleGroupByCategory,
+  showTaskInfo,
+  onToggleShowTaskInfo,
 }) {
   function patch(updates) {
     onChange({ ...filters, ...updates })
@@ -107,6 +109,15 @@ export function TaskFilters({
           onChange={onToggleGroupByCategory}
         />
         <span>Group by category</span>
+      </label>
+
+      <label className="filter-group group-by-toggle">
+        <input
+          type="checkbox"
+          checked={showTaskInfo}
+          onChange={onToggleShowTaskInfo}
+        />
+        <span>Show categories &amp; dates</span>
       </label>
     </div>
   )

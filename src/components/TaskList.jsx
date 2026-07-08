@@ -6,6 +6,7 @@ import { UNCATEGORIZED } from '../utils/constants'
 function TaskItemList({
   tasks,
   categoryOptions,
+  showInfo,
   onToggle,
   onDelete,
   onUpdate,
@@ -22,6 +23,7 @@ function TaskItemList({
           key={task.id}
           task={task}
           categoryOptions={categoryOptions}
+          showInfo={showInfo}
           onToggle={() => onToggle(task.id)}
           onDelete={() => onDelete(task.id)}
           onUpdate={(updates) => onUpdate(task.id, updates)}
