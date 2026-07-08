@@ -1,3 +1,6 @@
+import { categoryColor } from '../utils/categoryColor'
+import { UNCATEGORIZED } from '../utils/constants'
+
 const DATE_FILTER_MODES = [
   { value: 'any', label: 'Any' },
   { value: 'onOrBeforeToday', label: 'On or before today' },
@@ -31,22 +34,49 @@ export function TaskFilters({ filters, categoryOptions, onChange }) {
     onChange({ ...filters, ...updates })
   }
 
+  function toggleCategory(value) {
+    const selected = filters.categories.includes(value)
+      ? filters.categories.filter((c) => c !== value)
+      : [...filters.categories, value]
+    patch({ categories: selected })
+  }
+
   return (
     <div className="task-filters">
-      <label className="filter-group">
+      <div className="filter-group category-filter-group">
         <span>Category</span>
-        <select
-          value={filters.category}
-          onChange={(e) => patch({ category: e.target.value })}
-        >
-          <option value="">All categories</option>
-          {categoryOptions.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-      </label>
+        <div className="filter-chip-row">
+          <button
+            type="button"
+            className={`filter-chip${filters.categories.length === 0 ? ' active' : ''}`}
+            onClick={() => patch({ categories: [] })}
+          >
+            All
+          </button>
+          <button
+            type="button"
+            className={`filter-chip${filters.categories.includes(UNCATEGORIZED) ? ' active' : ''}`}
+            onClick={() => toggleCategory(UNCATEGORIZED)}
+          >
+            Uncategorized
+          </button>
+          {categoryOptions.map((name) => {
+            const active = filters.categories.includes(name)
+            const color = categoryColor(name)
+            return (
+              <button
+                type="button"
+                key={name}
+                className={`filter-chip${active ? ' active' : ''}`}
+                style={active ? { background: color.bg, borderColor: color.border } : undefined}
+                onClick={() => toggleCategory(name)}
+              >
+                {name}
+              </button>
+            )
+          })}
+        </div>
+      </div>
 
       <DateFilterGroup
         label="Due date"

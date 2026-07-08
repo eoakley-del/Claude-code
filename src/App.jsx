@@ -4,6 +4,7 @@ import { auth } from './firebase'
 import { useCloudDoc } from './hooks/useCloudDoc'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { matchesDateFilter, todayISO } from './utils/date'
+import { UNCATEGORIZED } from './utils/constants'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskFilters } from './components/TaskFilters'
 import { TaskList } from './components/TaskList'
@@ -18,7 +19,7 @@ function makeId() {
 const EMPTY_DOC = { tasks: [], delights: [] }
 
 const DEFAULT_FILTERS = {
-  category: '',
+  categories: [],
   dueMode: 'any',
   dueDate: '',
   workMode: 'any',
@@ -55,7 +56,12 @@ function App({ uid }) {
   }, [tasks])
 
   const visibleTasks = tasks.filter((t) => {
-    if (filters.category && t.category !== filters.category) return false
+    if (filters.categories.length > 0) {
+      const matchesCategory = t.category
+        ? filters.categories.includes(t.category)
+        : filters.categories.includes(UNCATEGORIZED)
+      if (!matchesCategory) return false
+    }
     if (!matchesDateFilter(t.dueDate, filters.dueMode, filters.dueDate)) return false
     if (!matchesDateFilter(t.workOnDate, filters.workMode, filters.workDate)) return false
     return true

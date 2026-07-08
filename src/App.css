@@ -225,6 +225,34 @@
   font-size: 13px;
 }
 
+.category-filter-group {
+  flex-basis: 100%;
+  align-items: flex-start;
+}
+
+.filter-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-chip {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.filter-chip.active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
 .task-list {
   list-style: none;
   margin: 0;
