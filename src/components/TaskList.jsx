@@ -4,6 +4,8 @@ export function TaskList({
   tasks,
   categoryOptions,
   emptyMessage,
+  showCompleted,
+  onToggleShowCompleted,
   onToggle,
   onDelete,
   onUpdate,
@@ -19,6 +21,7 @@ export function TaskList({
 
   const open = tasks.filter((t) => !t.done)
   const done = tasks.filter((t) => t.done)
+  const visible = showCompleted ? [...open, ...done] : open
 
   return (
     <>
@@ -27,22 +30,33 @@ export function TaskList({
           <option key={name} value={name} />
         ))}
       </datalist>
-      <ul className="task-list">
-        {[...open, ...done].map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggle={() => onToggle(task.id)}
-            onDelete={() => onDelete(task.id)}
-            onUpdate={(updates) => onUpdate(task.id, updates)}
-            onToggleToday={() => onToggleToday(task.id)}
-            onAddSubtask={(text) => onAddSubtask(task.id, text)}
-            onToggleSubtask={(subId) => onToggleSubtask(task.id, subId)}
-            onUpdateSubtask={(subId, text) => onUpdateSubtask(task.id, subId, text)}
-            onDeleteSubtask={(subId) => onDeleteSubtask(task.id, subId)}
-          />
-        ))}
-      </ul>
+      {visible.length === 0 ? (
+        <p className="empty-state">
+          All done — {done.length} completed task{done.length === 1 ? '' : 's'} hidden.
+        </p>
+      ) : (
+        <ul className="task-list">
+          {visible.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggle={() => onToggle(task.id)}
+              onDelete={() => onDelete(task.id)}
+              onUpdate={(updates) => onUpdate(task.id, updates)}
+              onToggleToday={() => onToggleToday(task.id)}
+              onAddSubtask={(text) => onAddSubtask(task.id, text)}
+              onToggleSubtask={(subId) => onToggleSubtask(task.id, subId)}
+              onUpdateSubtask={(subId, text) => onUpdateSubtask(task.id, subId, text)}
+              onDeleteSubtask={(subId) => onDeleteSubtask(task.id, subId)}
+            />
+          ))}
+        </ul>
+      )}
+      {done.length > 0 && (
+        <button type="button" className="show-completed-toggle" onClick={onToggleShowCompleted}>
+          {showCompleted ? 'Hide completed tasks' : `Show completed tasks (${done.length})`}
+        </button>
+      )}
     </>
   )
 }

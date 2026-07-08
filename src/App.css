@@ -198,6 +198,17 @@
   font-style: italic;
 }
 
+.show-completed-toggle {
+  display: block;
+  margin: 12px auto 0;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .task-filters {
   display: flex;
   flex-wrap: wrap;

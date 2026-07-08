@@ -35,6 +35,10 @@ function App({ uid }) {
     'taskmanager.enjoyCollapsed',
     false,
   )
+  const [showCompleted, setShowCompleted] = useLocalStorage(
+    'taskmanager.showCompleted',
+    false,
+  )
 
   function setTasks(updater) {
     update((prev) => ({
@@ -231,6 +235,8 @@ function App({ uid }) {
                 ? 'No tasks yet — jot some down above.'
                 : 'No tasks match these filters.'
             }
+            showCompleted={showCompleted}
+            onToggleShowCompleted={() => setShowCompleted((s) => !s)}
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}
