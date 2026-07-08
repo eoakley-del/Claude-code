@@ -29,7 +29,13 @@ function DateFilterGroup({ label, mode, date, onModeChange, onDateChange }) {
   )
 }
 
-export function TaskFilters({ filters, categoryOptions, onChange }) {
+export function TaskFilters({
+  filters,
+  categoryOptions,
+  onChange,
+  groupByCategory,
+  onToggleGroupByCategory,
+}) {
   function patch(updates) {
     onChange({ ...filters, ...updates })
   }
@@ -93,6 +99,15 @@ export function TaskFilters({ filters, categoryOptions, onChange }) {
         onModeChange={(workMode) => patch({ workMode })}
         onDateChange={(workDate) => patch({ workDate })}
       />
+
+      <label className="filter-group group-by-toggle">
+        <input
+          type="checkbox"
+          checked={groupByCategory}
+          onChange={onToggleGroupByCategory}
+        />
+        <span>Group by category</span>
+      </label>
     </div>
   )
 }
