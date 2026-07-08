@@ -1,6 +1,37 @@
 import { useState } from 'react'
 import { categoryColor } from '../utils/categoryColor'
 import { todayISO, formatDate } from '../utils/date'
+import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
+
+function SubtaskRow({ sub, onToggle, onUpdate, onDelete }) {
+  const textareaRef = useAutoResizeTextarea(sub.text)
+
+  return (
+    <li className="subtask-item">
+      <input
+        type="checkbox"
+        checked={sub.done}
+        onChange={onToggle}
+        aria-label="Mark subtask done"
+      />
+      <textarea
+        ref={textareaRef}
+        rows={1}
+        className={`subtask-text-input${sub.done ? ' done' : ''}`}
+        value={sub.text}
+        onChange={(e) => onUpdate(e.target.value)}
+      />
+      <button
+        type="button"
+        className="icon-btn"
+        aria-label="Delete subtask"
+        onClick={onDelete}
+      >
+        ×
+      </button>
+    </li>
+  )
+}
 
 export function TaskItem({
   task,
@@ -21,6 +52,7 @@ export function TaskItem({
   const overdue = Boolean(task.dueDate) && !task.done && task.dueDate < todayISO()
   const color = categoryColor(task.category)
   const isToday = task.todayDate === todayISO()
+  const textareaRef = useAutoResizeTextarea(task.text)
 
   function handleAddSubtask(e) {
     e.preventDefault()
@@ -39,8 +71,9 @@ export function TaskItem({
           onChange={onToggle}
           aria-label="Mark task done"
         />
-        <input
-          type="text"
+        <textarea
+          ref={textareaRef}
+          rows={1}
           className="task-text-input"
           value={task.text}
           onChange={(e) => onUpdate({ text: e.target.value })}
@@ -135,28 +168,13 @@ export function TaskItem({
             {subtasks.length > 0 && (
               <ul className="subtask-list">
                 {subtasks.map((sub) => (
-                  <li key={sub.id} className="subtask-item">
-                    <input
-                      type="checkbox"
-                      checked={sub.done}
-                      onChange={() => onToggleSubtask(sub.id)}
-                      aria-label="Mark subtask done"
-                    />
-                    <input
-                      type="text"
-                      className={`subtask-text-input${sub.done ? ' done' : ''}`}
-                      value={sub.text}
-                      onChange={(e) => onUpdateSubtask(sub.id, e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="icon-btn"
-                      aria-label="Delete subtask"
-                      onClick={() => onDeleteSubtask(sub.id)}
-                    >
-                      ×
-                    </button>
-                  </li>
+                  <SubtaskRow
+                    key={sub.id}
+                    sub={sub}
+                    onToggle={() => onToggleSubtask(sub.id)}
+                    onUpdate={(text) => onUpdateSubtask(sub.id, text)}
+                    onDelete={() => onDeleteSubtask(sub.id)}
+                  />
                 ))}
               </ul>
             )}

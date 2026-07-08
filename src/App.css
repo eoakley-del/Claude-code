@@ -284,13 +284,14 @@
 
 .task-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 
 .task-row input[type='checkbox'] {
   width: 18px;
   height: 18px;
+  margin-top: 6px;
   accent-color: var(--accent);
   cursor: pointer;
   flex-shrink: 0;
@@ -304,12 +305,21 @@
   color: var(--text-h);
   padding: 4px 2px;
   border-radius: 4px;
+  resize: none;
+  overflow: hidden;
+  font: inherit;
+  line-height: 1.4;
 }
 
 .task-text-input:focus {
   outline: none;
   background: var(--bg);
   box-shadow: 0 0 0 1px var(--accent-border);
+}
+
+.task-row .icon-btn,
+.task-row .star-btn {
+  margin-top: 2px;
 }
 
 .task-item.done .task-text-input {
@@ -407,7 +417,7 @@
 
 .subtask-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
 }
 
@@ -415,6 +425,11 @@
   accent-color: var(--accent);
   cursor: pointer;
   flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.subtask-item .icon-btn {
+  margin-top: 1px;
 }
 
 .subtask-text-input {
@@ -426,6 +441,10 @@
   padding: 3px 2px;
   border-radius: 4px;
   font-size: 14px;
+  resize: none;
+  overflow: hidden;
+  font-family: inherit;
+  line-height: 1.4;
 }
 
 .subtask-text-input:focus {
