@@ -48,6 +48,7 @@ export function TaskItem({
   onDeleteSubtask,
 }) {
   const [expanded, setExpanded] = useState(false)
+  const [detailsInfoCollapsed, setDetailsInfoCollapsed] = useState(false)
   const [subtaskDraft, setSubtaskDraft] = useState('')
   const [categoryDraft, setCategoryDraft] = useState('')
 
@@ -162,82 +163,96 @@ export function TaskItem({
 
       {expanded && (
         <div className="task-details">
-          <div className="field field-categories">
-            <span>Categories</span>
-            {categoryOptions.length > 0 && (
-              <div className="filter-chip-row">
-                {categoryOptions.map((name) => {
-                  const active = categories.includes(name)
-                  const color = categoryColor(name)
-                  return (
-                    <button
-                      type="button"
-                      key={name}
-                      className={`filter-chip${active ? ' active' : ''}`}
-                      style={active ? { background: color.bg, borderColor: color.border } : undefined}
-                      onClick={() => toggleCategory(name)}
-                    >
-                      {name}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-            <form className="add-category-form" onSubmit={handleAddCategory}>
-              <input
-                type="text"
-                placeholder="New category…"
-                value={categoryDraft}
-                onChange={(e) => setCategoryDraft(e.target.value)}
-              />
-              <button type="submit" className="btn btn-ghost">
-                Add
-              </button>
-            </form>
+          <div className="details-info-toggle-row">
+            <button
+              type="button"
+              className="panel-toggle"
+              onClick={() => setDetailsInfoCollapsed((c) => !c)}
+            >
+              {detailsInfoCollapsed ? 'Show categories & dates' : 'Hide categories & dates'}
+            </button>
           </div>
 
-          <div className="task-detail-fields">
-            <label className="field">
-              <span>Due date</span>
-              <div className="date-input-row">
-                <input
-                  type="date"
-                  value={task.dueDate || ''}
-                  onChange={(e) => onUpdate({ dueDate: e.target.value })}
-                />
-                {task.dueDate && (
-                  <button
-                    type="button"
-                    className="icon-btn"
-                    aria-label="Clear due date"
-                    onClick={() => onUpdate({ dueDate: '' })}
-                  >
-                    ×
-                  </button>
+          {!detailsInfoCollapsed && (
+            <>
+              <div className="field field-categories">
+                <span>Categories</span>
+                {categoryOptions.length > 0 && (
+                  <div className="filter-chip-row">
+                    {categoryOptions.map((name) => {
+                      const active = categories.includes(name)
+                      const color = categoryColor(name)
+                      return (
+                        <button
+                          type="button"
+                          key={name}
+                          className={`filter-chip${active ? ' active' : ''}`}
+                          style={active ? { background: color.bg, borderColor: color.border } : undefined}
+                          onClick={() => toggleCategory(name)}
+                        >
+                          {name}
+                        </button>
+                      )
+                    })}
+                  </div>
                 )}
-              </div>
-            </label>
-            <label className="field">
-              <span>Work on on:</span>
-              <div className="date-input-row">
-                <input
-                  type="date"
-                  value={task.workOnDate || ''}
-                  onChange={(e) => onUpdate({ workOnDate: e.target.value })}
-                />
-                {task.workOnDate && (
-                  <button
-                    type="button"
-                    className="icon-btn"
-                    aria-label="Clear work-on date"
-                    onClick={() => onUpdate({ workOnDate: '' })}
-                  >
-                    ×
+                <form className="add-category-form" onSubmit={handleAddCategory}>
+                  <input
+                    type="text"
+                    placeholder="New category…"
+                    value={categoryDraft}
+                    onChange={(e) => setCategoryDraft(e.target.value)}
+                  />
+                  <button type="submit" className="btn btn-ghost">
+                    Add
                   </button>
-                )}
+                </form>
               </div>
-            </label>
-          </div>
+
+              <div className="task-detail-fields">
+                <label className="field">
+                  <span>Due date</span>
+                  <div className="date-input-row">
+                    <input
+                      type="date"
+                      value={task.dueDate || ''}
+                      onChange={(e) => onUpdate({ dueDate: e.target.value })}
+                    />
+                    {task.dueDate && (
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        aria-label="Clear due date"
+                        onClick={() => onUpdate({ dueDate: '' })}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                </label>
+                <label className="field">
+                  <span>Work on on:</span>
+                  <div className="date-input-row">
+                    <input
+                      type="date"
+                      value={task.workOnDate || ''}
+                      onChange={(e) => onUpdate({ workOnDate: e.target.value })}
+                    />
+                    {task.workOnDate && (
+                      <button
+                        type="button"
+                        className="icon-btn"
+                        aria-label="Clear work-on date"
+                        onClick={() => onUpdate({ workOnDate: '' })}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                </label>
+              </div>
+            </>
+          )}
 
           <div className="subtasks">
             <span className="subtasks-label">Subtasks</span>

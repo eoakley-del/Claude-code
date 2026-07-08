@@ -105,6 +105,10 @@
   color: var(--text-h);
 }
 
+.filters-toggle-row {
+  margin-bottom: 8px;
+}
+
 /* Buttons */
 
 .btn {
@@ -401,6 +405,14 @@
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg);
+}
+
+.details-info-toggle-row {
+  margin-bottom: 10px;
+}
+
+.details-info-toggle-row .panel-toggle {
+  margin-bottom: 0;
 }
 
 .task-detail-fields {

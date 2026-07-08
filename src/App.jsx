@@ -48,6 +48,10 @@ function App({ uid }) {
     'taskmanager.showTaskInfo',
     true,
   )
+  const [filtersCollapsed, setFiltersCollapsed] = useLocalStorage(
+    'taskmanager.filtersCollapsed',
+    false,
+  )
 
   function setTasks(updater) {
     update((prev) => ({
@@ -235,15 +239,26 @@ function App({ uid }) {
             onDeleteSubtask={deleteSubtask}
           />
           <TaskNotepad onAddTasks={addTasks} />
-          <TaskFilters
-            filters={filters}
-            categoryOptions={categoryOptions}
-            onChange={setFilters}
-            groupByCategory={groupByCategory}
-            onToggleGroupByCategory={() => setGroupByCategory((g) => !g)}
-            showTaskInfo={showTaskInfo}
-            onToggleShowTaskInfo={() => setShowTaskInfo((s) => !s)}
-          />
+          <div className="filters-toggle-row">
+            <button
+              type="button"
+              className="panel-toggle"
+              onClick={() => setFiltersCollapsed((c) => !c)}
+            >
+              {filtersCollapsed ? 'Show filters' : 'Hide filters'}
+            </button>
+          </div>
+          {!filtersCollapsed && (
+            <TaskFilters
+              filters={filters}
+              categoryOptions={categoryOptions}
+              onChange={setFilters}
+              groupByCategory={groupByCategory}
+              onToggleGroupByCategory={() => setGroupByCategory((g) => !g)}
+              showTaskInfo={showTaskInfo}
+              onToggleShowTaskInfo={() => setShowTaskInfo((s) => !s)}
+            />
+          )}
           <TaskList
             tasks={visibleTasks}
             categoryOptions={categoryOptions}
