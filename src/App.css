@@ -427,6 +427,17 @@
   font-size: 14px;
 }
 
+.date-input-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.date-input-row .icon-btn {
+  font-size: 18px;
+  padding: 2px 4px;
+}
+
 .field-categories {
   margin-bottom: 14px;
 }

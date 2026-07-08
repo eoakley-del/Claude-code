@@ -196,19 +196,43 @@ export function TaskItem({
           <div className="task-detail-fields">
             <label className="field">
               <span>Due date</span>
-              <input
-                type="date"
-                value={task.dueDate || ''}
-                onChange={(e) => onUpdate({ dueDate: e.target.value })}
-              />
+              <div className="date-input-row">
+                <input
+                  type="date"
+                  value={task.dueDate || ''}
+                  onChange={(e) => onUpdate({ dueDate: e.target.value })}
+                />
+                {task.dueDate && (
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    aria-label="Clear due date"
+                    onClick={() => onUpdate({ dueDate: '' })}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             </label>
             <label className="field">
               <span>Work on on:</span>
-              <input
-                type="date"
-                value={task.workOnDate || ''}
-                onChange={(e) => onUpdate({ workOnDate: e.target.value })}
-              />
+              <div className="date-input-row">
+                <input
+                  type="date"
+                  value={task.workOnDate || ''}
+                  onChange={(e) => onUpdate({ workOnDate: e.target.value })}
+                />
+                {task.workOnDate && (
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    aria-label="Clear work-on date"
+                    onClick={() => onUpdate({ workOnDate: '' })}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             </label>
           </div>
 
