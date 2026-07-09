@@ -52,6 +52,10 @@ function App({ uid }) {
     'taskmanager.filtersCollapsed',
     false,
   )
+  const [starredShowInfo, setStarredShowInfo] = useLocalStorage(
+    'taskmanager.starredShowInfo',
+    true,
+  )
 
   function setTasks(updater) {
     update((prev) => ({
@@ -228,7 +232,8 @@ function App({ uid }) {
           <StarredTasks
             tasks={starredTasks}
             categoryOptions={categoryOptions}
-            showInfo={showTaskInfo}
+            showInfo={starredShowInfo}
+            onToggleShowInfo={() => setStarredShowInfo((s) => !s)}
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}

@@ -4,6 +4,7 @@ export function StarredTasks({
   tasks,
   categoryOptions,
   showInfo,
+  onToggleShowInfo,
   onToggle,
   onDelete,
   onUpdate,
@@ -17,7 +18,12 @@ export function StarredTasks({
 
   return (
     <div className="today-picks">
-      <span className="today-picks-label">Starred for today</span>
+      <div className="today-picks-header">
+        <span className="today-picks-label">Starred for today</span>
+        <button type="button" className="panel-toggle" onClick={onToggleShowInfo}>
+          {showInfo ? 'Hide categories & dates' : 'Show categories & dates'}
+        </button>
+      </div>
       <ul className="task-list starred-task-list">
         {tasks.map((task) => (
           <TaskItem

@@ -563,12 +563,25 @@
   margin-bottom: 20px;
 }
 
+.today-picks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
 .today-picks-label {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent);
   font-weight: 600;
+}
+
+.today-picks-header .panel-toggle {
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .today-picks-list {
