@@ -1,4 +1,14 @@
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { TaskItem } from './TaskItem'
+import { SortableTaskItem } from './SortableTaskItem'
 import { categoryColor } from '../utils/categoryColor'
 import { getTaskCategories } from '../utils/task'
 import { UNCATEGORIZED } from '../utils/constants'
@@ -7,6 +17,7 @@ function TaskItemList({
   tasks,
   categoryOptions,
   showInfo,
+  onReorderTasks,
   onToggle,
   onDelete,
   onUpdate,
@@ -16,23 +27,51 @@ function TaskItemList({
   onUpdateSubtask,
   onDeleteSubtask,
 }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
+  )
+
+  const notDone = tasks.filter((t) => !t.done)
+  const done = tasks.filter((t) => t.done)
+
+  function itemProps(task) {
+    return {
+      task,
+      categoryOptions,
+      showInfo,
+      onToggle: () => onToggle(task.id),
+      onDelete: () => onDelete(task.id),
+      onUpdate: (updates) => onUpdate(task.id, updates),
+      onToggleToday: () => onToggleToday(task.id),
+      onAddSubtask: (text) => onAddSubtask(task.id, text),
+      onToggleSubtask: (subId) => onToggleSubtask(task.id, subId),
+      onUpdateSubtask: (subId, text) => onUpdateSubtask(task.id, subId, text),
+      onDeleteSubtask: (subId) => onDeleteSubtask(task.id, subId),
+      onReorderSubtasks: (newSubtasks) => onUpdate(task.id, { subtasks: newSubtasks }),
+    }
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = notDone.findIndex((t) => t.id === active.id)
+    const newIndex = notDone.findIndex((t) => t.id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+    onReorderTasks(notDone, arrayMove(notDone, oldIndex, newIndex))
+  }
+
   return (
     <ul className="task-list">
-      {tasks.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          categoryOptions={categoryOptions}
-          showInfo={showInfo}
-          onToggle={() => onToggle(task.id)}
-          onDelete={() => onDelete(task.id)}
-          onUpdate={(updates) => onUpdate(task.id, updates)}
-          onToggleToday={() => onToggleToday(task.id)}
-          onAddSubtask={(text) => onAddSubtask(task.id, text)}
-          onToggleSubtask={(subId) => onToggleSubtask(task.id, subId)}
-          onUpdateSubtask={(subId, text) => onUpdateSubtask(task.id, subId, text)}
-          onDeleteSubtask={(subId) => onDeleteSubtask(task.id, subId)}
-        />
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={notDone.map((t) => t.id)} strategy={verticalListSortingStrategy}>
+          {notDone.map((task) => (
+            <SortableTaskItem key={task.id} {...itemProps(task)} />
+          ))}
+        </SortableContext>
+      </DndContext>
+      {done.map((task) => (
+        <TaskItem key={task.id} {...itemProps(task)} />
       ))}
     </ul>
   )

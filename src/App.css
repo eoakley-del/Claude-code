@@ -308,16 +308,43 @@
 .task-item {
   padding: 8px 4px;
   border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
 }
 
 .task-item:last-child {
   border-bottom: none;
 }
 
+.task-item.dragging {
+  opacity: 0.5;
+  z-index: 1;
+}
+
 .task-row {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+}
+
+.drag-handle {
+  background: none;
+  border: none;
+  color: var(--border);
+  font-size: 18px;
+  line-height: 1;
+  cursor: grab;
+  padding: 4px 2px;
+  margin-top: 4px;
+  flex-shrink: 0;
+  touch-action: none;
+}
+
+.drag-handle:hover {
+  color: var(--text);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 .task-row input[type='checkbox'] {

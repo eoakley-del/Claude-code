@@ -1,14 +1,52 @@
 import { useState } from 'react'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { categoryColor } from '../utils/categoryColor'
 import { todayISO, formatDate } from '../utils/date'
 import { getTaskCategories } from '../utils/task'
 import { useAutoResizeTextarea } from '../hooks/useAutoResizeTextarea'
 
+function DragHandle({ attributes, listeners }) {
+  return (
+    <button
+      type="button"
+      className="drag-handle"
+      aria-label="Drag to reorder"
+      {...attributes}
+      {...listeners}
+    >
+      ⠿
+    </button>
+  )
+}
+
 function SubtaskRow({ sub, onToggle, onUpdate, onDelete }) {
   const textareaRef = useAutoResizeTextarea(sub.text)
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: sub.id,
+  })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
 
   return (
-    <li className="subtask-item">
+    <li className="subtask-item" ref={setNodeRef} style={style}>
+      <DragHandle attributes={attributes} listeners={listeners} />
       <input
         type="checkbox"
         checked={sub.done}
@@ -38,6 +76,10 @@ export function TaskItem({
   task,
   categoryOptions,
   showInfo,
+  dragHandleProps,
+  setSortableRef,
+  sortableStyle,
+  isDragging,
   onToggle,
   onDelete,
   onUpdate,
@@ -46,11 +88,16 @@ export function TaskItem({
   onToggleSubtask,
   onUpdateSubtask,
   onDeleteSubtask,
+  onReorderSubtasks,
 }) {
   const [expanded, setExpanded] = useState(false)
   const [detailsInfoCollapsed, setDetailsInfoCollapsed] = useState(false)
   const [subtaskDraft, setSubtaskDraft] = useState('')
   const [categoryDraft, setCategoryDraft] = useState('')
+  const subtaskSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
+  )
 
   const subtasks = task.subtasks || []
   const doneCount = subtasks.filter((s) => s.done).length
@@ -85,9 +132,23 @@ export function TaskItem({
     setCategoryDraft('')
   }
 
+  function handleSubtaskDragEnd(event) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIndex = subtasks.findIndex((s) => s.id === active.id)
+    const newIndex = subtasks.findIndex((s) => s.id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+    onReorderSubtasks(arrayMove(subtasks, oldIndex, newIndex))
+  }
+
   return (
-    <li className={`task-item${task.done ? ' done' : ''}`}>
+    <li
+      className={`task-item${task.done ? ' done' : ''}${isDragging ? ' dragging' : ''}`}
+      ref={setSortableRef}
+      style={sortableStyle}
+    >
       <div className="task-row">
+        {dragHandleProps && <DragHandle {...dragHandleProps} />}
         <input
           type="checkbox"
           checked={task.done}
@@ -257,17 +318,28 @@ export function TaskItem({
           <div className="subtasks">
             <span className="subtasks-label">Subtasks</span>
             {subtasks.length > 0 && (
-              <ul className="subtask-list">
-                {subtasks.map((sub) => (
-                  <SubtaskRow
-                    key={sub.id}
-                    sub={sub}
-                    onToggle={() => onToggleSubtask(sub.id)}
-                    onUpdate={(text) => onUpdateSubtask(sub.id, text)}
-                    onDelete={() => onDeleteSubtask(sub.id)}
-                  />
-                ))}
-              </ul>
+              <DndContext
+                sensors={subtaskSensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleSubtaskDragEnd}
+              >
+                <SortableContext
+                  items={subtasks.map((s) => s.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ul className="subtask-list">
+                    {subtasks.map((sub) => (
+                      <SubtaskRow
+                        key={sub.id}
+                        sub={sub}
+                        onToggle={() => onToggleSubtask(sub.id)}
+                        onUpdate={(text) => onUpdateSubtask(sub.id, text)}
+                        onDelete={() => onDeleteSubtask(sub.id)}
+                      />
+                    ))}
+                  </ul>
+                </SortableContext>
+              </DndContext>
             )}
             <form className="subtask-form" onSubmit={handleAddSubtask}>
               <input

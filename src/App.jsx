@@ -6,6 +6,7 @@ import { useLocalStorage } from './hooks/useLocalStorage'
 import { matchesDateFilter, todayISO } from './utils/date'
 import { UNCATEGORIZED } from './utils/constants'
 import { getTaskCategories } from './utils/task'
+import { reorderSubset } from './utils/reorder'
 import { TaskNotepad } from './components/TaskNotepad'
 import { TaskFilters } from './components/TaskFilters'
 import { TaskList } from './components/TaskList'
@@ -128,6 +129,10 @@ function App({ uid }) {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...updates } : t)))
   }
 
+  function reorderTasks(oldSubsetOrder, newSubsetOrder) {
+    setTasks((prev) => reorderSubset(prev, oldSubsetOrder, newSubsetOrder))
+  }
+
   function addSubtask(taskId, text) {
     setTasks((prev) =>
       prev.map((t) =>
@@ -234,6 +239,7 @@ function App({ uid }) {
             categoryOptions={categoryOptions}
             showInfo={starredShowInfo}
             onToggleShowInfo={() => setStarredShowInfo((s) => !s)}
+            onReorderTasks={reorderTasks}
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}
@@ -276,6 +282,7 @@ function App({ uid }) {
             onToggleShowCompleted={() => setShowCompleted((s) => !s)}
             showInfo={showTaskInfo}
             groupByCategory={groupByCategory}
+            onReorderTasks={reorderTasks}
             onToggle={toggleTask}
             onDelete={deleteTask}
             onUpdate={updateTask}
