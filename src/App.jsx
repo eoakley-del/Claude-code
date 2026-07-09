@@ -103,6 +103,7 @@ function App({ uid }) {
       workOnDate: '',
       todayDate: '',
       subtasks: [],
+      notes: '',
     }))
     setTasks((prev) => [...prev, ...newTasks])
   }

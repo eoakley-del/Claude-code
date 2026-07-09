@@ -105,6 +105,7 @@ export function TaskItem({
   const categories = getTaskCategories(task)
   const isToday = task.todayDate === todayISO()
   const textareaRef = useAutoResizeTextarea(task.text)
+  const notesRef = useAutoResizeTextarea(task.notes || '')
 
   function handleAddSubtask(e) {
     e.preventDefault()
@@ -312,6 +313,18 @@ export function TaskItem({
               </div>
             </>
           )}
+
+          <div className="field field-notes">
+            <span>Notes</span>
+            <textarea
+              ref={notesRef}
+              rows={1}
+              className="notes-input"
+              placeholder="Add any additional details…"
+              value={task.notes || ''}
+              onChange={(e) => onUpdate({ notes: e.target.value })}
+            />
+          </div>
 
           <div className="subtasks">
             <span className="subtasks-label">Subtasks</span>
