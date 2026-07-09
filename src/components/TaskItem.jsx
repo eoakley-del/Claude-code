@@ -162,6 +162,11 @@ export function TaskItem({
           value={task.text}
           onChange={(e) => onUpdate({ text: e.target.value })}
         />
+        {subtasks.length > 0 && (
+          <span className="chip chip-subtasks">
+            {doneCount}/{subtasks.length}
+          </span>
+        )}
         <button
           type="button"
           className={`star-btn${isToday ? ' active' : ''}`}
@@ -188,35 +193,28 @@ export function TaskItem({
         </button>
       </div>
 
-      {((showInfo && (categories.length > 0 || task.dueDate || task.workOnDate)) ||
-        subtasks.length > 0) && (
+      {showInfo && (categories.length > 0 || task.dueDate || task.workOnDate) && (
         <div className="task-chips">
-          {showInfo &&
-            categories.map((name) => {
-              const color = categoryColor(name)
-              return (
-                <span
-                  key={name}
-                  className="chip"
-                  style={{ background: color.bg, borderLeftColor: color.border }}
-                >
-                  {name}
-                </span>
-              )
-            })}
-          {showInfo && task.dueDate && (
+          {categories.map((name) => {
+            const color = categoryColor(name)
+            return (
+              <span
+                key={name}
+                className="chip"
+                style={{ background: color.bg, borderLeftColor: color.border }}
+              >
+                {name}
+              </span>
+            )
+          })}
+          {task.dueDate && (
             <span className={`chip chip-due${overdue ? ' overdue' : ''}`}>
               Due {formatDate(task.dueDate)}
             </span>
           )}
-          {showInfo && task.workOnDate && (
+          {task.workOnDate && (
             <span className="chip chip-workon">
               Work on on: {formatDate(task.workOnDate)}
-            </span>
-          )}
-          {subtasks.length > 0 && (
-            <span className="chip chip-subtasks">
-              {doneCount}/{subtasks.length}
             </span>
           )}
         </div>

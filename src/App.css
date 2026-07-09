@@ -381,6 +381,11 @@
   margin-top: 2px;
 }
 
+.task-row .chip-subtasks {
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
 .task-item.done .task-text-input {
   color: var(--text);
   text-decoration: line-through;
