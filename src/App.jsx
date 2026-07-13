@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { signOut } from 'firebase/auth'
 import { auth } from './firebase'
 import { useCloudDoc } from './hooks/useCloudDoc'
@@ -212,7 +212,19 @@ function App({ uid }) {
     setSuggestionId(pick.id)
   }
 
-  const suggestion = delights.find((d) => d.id === suggestionId) || delights[0] || null
+  const suggestion = delights.find((d) => d.id === suggestionId) || null
+
+  useEffect(() => {
+    if (delights.length === 0) {
+      if (suggestionId !== null) setSuggestionId(null)
+      return
+    }
+    const stillValid = delights.some((d) => d.id === suggestionId)
+    if (!stillValid) {
+      const pick = delights[Math.floor(Math.random() * delights.length)]
+      setSuggestionId(pick.id)
+    }
+  }, [delights, suggestionId])
 
   if (!ready) {
     return (
