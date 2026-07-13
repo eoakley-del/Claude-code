@@ -95,7 +95,7 @@ export function TaskList({
   const visible = showCompleted ? [...open, ...done] : open
 
   const groups = groupByCategory
-    ? [...categoryOptions, UNCATEGORIZED]
+    ? [UNCATEGORIZED, ...categoryOptions]
         .map((name) => ({
           name,
           tasks: visible.filter((t) => {

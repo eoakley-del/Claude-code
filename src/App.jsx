@@ -105,7 +105,7 @@ function App({ uid }) {
       subtasks: [],
       notes: '',
     }))
-    setTasks((prev) => [...prev, ...newTasks])
+    setTasks((prev) => [...newTasks, ...prev])
   }
 
   function toggleTask(id) {
@@ -185,7 +185,7 @@ function App({ uid }) {
   }
 
   function addDelight(text) {
-    setDelights((prev) => [...prev, { id: makeId(), text, todayDate: '' }])
+    setDelights((prev) => [{ id: makeId(), text, todayDate: '' }, ...prev])
   }
 
   function toggleTodayPick(id) {
