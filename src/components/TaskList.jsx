@@ -91,14 +91,15 @@ export function TaskList({
   }
 
   const open = tasks.filter((t) => !t.done)
-  const done = tasks.filter((t) => t.done)
-  const visible = showCompleted ? [...open, ...done] : open
+  const done = [...tasks.filter((t) => t.done)].sort(
+    (a, b) => (b.completedAt || 0) - (a.completedAt || 0),
+  )
 
   const groups = groupByCategory
     ? [UNCATEGORIZED, ...categoryOptions]
         .map((name) => ({
           name,
-          tasks: visible.filter((t) => {
+          tasks: open.filter((t) => {
             const cats = getTaskCategories(t)
             return name === UNCATEGORIZED ? cats.length === 0 : cats.includes(name)
           }),
@@ -108,32 +109,40 @@ export function TaskList({
 
   return (
     <>
-      {visible.length === 0 ? (
+      {open.length === 0 && !showCompleted && (
         <p className="empty-state">
           All done — {done.length} completed task{done.length === 1 ? '' : 's'} hidden.
         </p>
-      ) : groups ? (
-        groups.map((group) => {
-          const isUncategorized = group.name === UNCATEGORIZED
-          const color = isUncategorized ? null : categoryColor(group.name)
-          return (
-            <div className="task-group" key={group.name}>
-              <div
-                className="task-group-header"
-                style={
-                  isUncategorized
-                    ? undefined
-                    : { background: color.bg, borderLeftColor: color.border }
-                }
-              >
-                {isUncategorized ? 'Uncategorized' : group.name}
+      )}
+      {open.length > 0 &&
+        (groups ? (
+          groups.map((group) => {
+            const isUncategorized = group.name === UNCATEGORIZED
+            const color = isUncategorized ? null : categoryColor(group.name)
+            return (
+              <div className="task-group" key={group.name}>
+                <div
+                  className="task-group-header"
+                  style={
+                    isUncategorized
+                      ? undefined
+                      : { background: color.bg, borderLeftColor: color.border }
+                  }
+                >
+                  {isUncategorized ? 'Uncategorized' : group.name}
+                </div>
+                <TaskItemList tasks={group.tasks} categoryOptions={categoryOptions} {...itemHandlers} />
               </div>
-              <TaskItemList tasks={group.tasks} categoryOptions={categoryOptions} {...itemHandlers} />
-            </div>
-          )
-        })
-      ) : (
-        <TaskItemList tasks={visible} categoryOptions={categoryOptions} {...itemHandlers} />
+            )
+          })
+        ) : (
+          <TaskItemList tasks={open} categoryOptions={categoryOptions} {...itemHandlers} />
+        ))}
+      {showCompleted && done.length > 0 && (
+        <div className="task-group">
+          <div className="task-group-header">Completed</div>
+          <TaskItemList tasks={done} categoryOptions={categoryOptions} {...itemHandlers} />
+        </div>
       )}
       {done.length > 0 && (
         <button type="button" className="show-completed-toggle" onClick={onToggleShowCompleted}>

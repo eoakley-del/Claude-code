@@ -33,7 +33,9 @@ export function StarredTasks({
   if (tasks.length === 0) return null
 
   const notDone = tasks.filter((t) => !t.done)
-  const done = tasks.filter((t) => t.done)
+  const done = [...tasks.filter((t) => t.done)].sort(
+    (a, b) => (b.completedAt || 0) - (a.completedAt || 0),
+  )
 
   function itemProps(task) {
     return {

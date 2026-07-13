@@ -98,6 +98,7 @@ function App({ uid }) {
       id: makeId(),
       text,
       done: false,
+      completedAt: null,
       categories: [],
       dueDate: '',
       workOnDate: '',
@@ -110,7 +111,11 @@ function App({ uid }) {
 
   function toggleTask(id) {
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)),
+      prev.map((t) => {
+        if (t.id !== id) return t
+        const nextDone = !t.done
+        return { ...t, done: nextDone, completedAt: nextDone ? Date.now() : null }
+      }),
     )
   }
 
