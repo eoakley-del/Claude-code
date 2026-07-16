@@ -91,7 +91,7 @@ export function TaskItem({
   onReorderSubtasks,
 }) {
   const [expanded, setExpanded] = useState(false)
-  const [detailsInfoCollapsed, setDetailsInfoCollapsed] = useState(false)
+  const [detailsInfoCollapsed, setDetailsInfoCollapsed] = useState(true)
   const [subtaskDraft, setSubtaskDraft] = useState('')
   const [categoryDraft, setCategoryDraft] = useState('')
   const subtaskSensors = useSensors(
