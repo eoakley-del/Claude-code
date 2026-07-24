@@ -1,5 +1,14 @@
+const TODAY_TIME_ZONE = 'America/New_York'
+
 export function todayISO() {
-  return new Date().toISOString().slice(0, 10)
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: TODAY_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date())
+  const get = (type) => parts.find((p) => p.type === type).value
+  return `${get('year')}-${get('month')}-${get('day')}`
 }
 
 export function formatDate(dateStr) {
